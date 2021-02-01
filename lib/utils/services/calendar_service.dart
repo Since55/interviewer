@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:googleapis/calendar/v3.dart';
 import 'package:googleapis_auth/auth.dart';
 import 'package:googleapis_auth/auth_io.dart';
+import 'package:interviewer/constants/google.dart';
 import 'package:interviewer/modules/home/models/calendar_event_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -11,7 +12,7 @@ class CalendarService {
   AuthClient _client;
   String _selectedCalendarId;
   final _credentials = ClientId(
-      "487567944310-ii76hmqji3tm60pdb4ak6d32ng79m3fc.apps.googleusercontent.com",
+      GoogleApiConstants.CLIENT_ID,
       "");
       
   getClient() async {
