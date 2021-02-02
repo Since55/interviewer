@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:interviewer/utils/services/firebase_service.dart';
+import 'package:interviewer/widgets/snackbar.dart';
 
 class CandidateController extends GetxController {
   final String role;
@@ -23,11 +25,23 @@ class CandidateController extends GetxController {
   Map<String, double> rating = {};
 
   Future<void> sendRating() async {
-    await _firestore.sendInterviewRating(
-      candidateName: candidateName,
-      role: role,
-      rating: rating,
-    );
-    Get.back();
+    try {
+      await _firestore.sendInterviewRating(
+        candidateName: candidateName,
+        role: role,
+        rating: rating,
+      );
+      Get.back();
+      showSnackbar(
+        'Data was send successfuly',
+        '',
+      );
+    } catch (e) {
+      showSnackbar(
+        'Error',
+        e.message,
+        icon: Icon(Icons.error),
+      );
+    }
   }
 }

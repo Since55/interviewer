@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:interviewer/modules/login/controllers/auth_controller.dart';
+import 'package:interviewer/modules/login/controllers/login_controller.dart';
 import 'package:interviewer/utils/helpers/field_helpers.dart';
 
 class LoginScreen extends GetWidget<LoginController> {

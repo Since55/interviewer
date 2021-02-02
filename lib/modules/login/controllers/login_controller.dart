@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:interviewer/core/auth/controllers/auth_controller.dart';
 import 'package:interviewer/utils/helpers/text_helpers.dart';
+import 'package:interviewer/widgets/snackbar.dart';
 
 class LoginController extends GetxController {
   FirebaseAuth _auth = FirebaseAuth.instance;
@@ -18,13 +19,10 @@ class LoginController extends GetxController {
   void login(String email, String password) async {
     try {
       if (isNotNullOrEmpty(email) && isNotNullOrEmpty(password)) {
-        Get.snackbar(
+        showSnackbar(
           'Signing In',
           'Please wait...',
           icon: Icon(Icons.pending),
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.white38,
-          duration: Duration(milliseconds: 1000),
         );
       }
 
@@ -36,13 +34,9 @@ class LoginController extends GetxController {
       this._authController.isSignedIn = true.obs();
     } catch (e) {
       // this.isSignedIn = false.obs();
-      Get.snackbar(
+      showSnackbar(
         "Error while Signing In",
         e.message,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.white38,
-        duration: Duration(milliseconds: 900),
-        overlayBlur: 1,
       );
     }
   }

@@ -34,7 +34,15 @@ class HomeScreen extends GetView<HomeController> {
         children: [
           Obx(
             () => controller.eventList.length < 1
-                ? EmptyPage(text: 'No events')
+                ? Column(
+                    children: [
+                      FlatButton(
+                        onPressed: () => controller.getEventList(),
+                        child: Text('Refresh'),
+                      ),
+                      EmptyPage(text: 'No events'),
+                    ],
+                  )
                 : Expanded(
                     child: RefreshIndicator(
                       onRefresh: () => controller.getEventList(),
