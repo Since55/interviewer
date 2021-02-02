@@ -33,7 +33,7 @@ class CandidateController extends GetxController {
       );
       Get.back();
       showSnackbar(
-        'Data was send successfuly',
+        '$candidateName was rated successfuly',
         '',
       );
     } catch (e) {

@@ -13,6 +13,7 @@ class CompetencyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     CandidateController _controller = Get.find();
+    _controller.rating[competency] = 0.0;
     return Card(
       child: Padding(
         padding: EdgeInsets.all(5.0),
@@ -33,7 +34,6 @@ class CompetencyCard extends StatelessWidget {
               ),
               onRatingUpdate: (rating) {
                 _controller.rating[competency] = rating;
-                print(_controller.rating);
               },
             ),
           ],
