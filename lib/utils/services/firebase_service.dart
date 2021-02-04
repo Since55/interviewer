@@ -17,12 +17,18 @@ class FirebaseService {
     @required String candidateName,
     @required String role,
     @required Map<String, double> rating,
+    String comment = '',
   }) async {
-    await _firestore.collection("candidates").doc('results').collection(candidateName).add(
+    await _firestore
+        .collection("candidates")
+        .doc('results')
+        .collection(candidateName)
+        .add(
       {
         'name': candidateName,
         'role': role,
         'rating': rating,
+        'comment': comment,
       },
     );
   }

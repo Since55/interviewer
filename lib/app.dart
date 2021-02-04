@@ -8,6 +8,7 @@ import 'config/routes/pages.dart';
 class AppCore extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    print('App started');
     return GetMaterialApp(
       title: 'Inteviewer',
       debugShowCheckedModeBanner: false,
@@ -22,4 +23,3 @@ class AppCore extends StatelessWidget {
     );
   }
 }
-

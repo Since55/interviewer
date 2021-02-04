@@ -26,6 +26,7 @@ String mapRolesToString(Roles role) {
   }
 }
 
+// contains variants of role name for parsing from Calendar Api
 final Map<Roles, Set<String>> roles = {
   Roles.FRONTEND: {
     'frontend',

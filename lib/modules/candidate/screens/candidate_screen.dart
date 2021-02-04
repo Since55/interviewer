@@ -9,6 +9,7 @@ import 'package:interviewer/widgets/empty_page.dart';
 
 class CandidateScreen extends GetView<CandidateController> {
   final CalendarEventModel event;
+  FocusNode commentFocus = FocusNode();
   String role;
   CandidateScreen(this.event) {
     this.role = mapRolesToString(
@@ -20,29 +21,57 @@ class CandidateScreen extends GetView<CandidateController> {
       candidateName: event.name,
       role: role,
     ));
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          this.event.name,
+    return Obx(
+      () => Scaffold(
+        appBar: AppBar(
+          title: Text(
+            this.event.name,
+          ),
         ),
-      ),
-      body: Obx(
-        () => controller.competenciesList == null
+        body: controller.competenciesList == null
             ? EmptyPage(text: 'Loading')
-            : ListView.builder(
-                itemCount: controller.competenciesList.length,
-                itemBuilder: (context, index) =>
-                    CompetencyCard(controller.competenciesList[index]),
+            : Column(
+                children: [
+                  // TODO: hide keyboard
+                  TextField(
+                    maxLines: 2,
+                    controller: controller.commentController,
+                    focusNode: commentFocus,
+                    decoration: InputDecoration(
+                      hintText: 'Comment',
+                      suffixIcon: IconButton(
+                        onPressed: () => controller.commentController.clear(),
+                        icon: Icon(Icons.close),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => commentFocus.unfocus(),
+                      child: ListView.builder(
+                        itemCount: controller.competenciesList.length,
+                        itemBuilder: (context, index) =>
+                            CompetencyCard(controller.competenciesList[index]),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Padding(
-          padding: const EdgeInsets.only(left: 3.0),
-          child: Icon(Icons.send),
+        floatingActionButton: FloatingActionButton(
+          child: controller.isBusy
+              ? CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation(Colors.white),
+                )
+              : Padding(
+                  padding: const EdgeInsets.only(left: 3.0),
+                  child: Icon(Icons.send),
+                ),
+          onPressed: controller.isBusy
+              ? () {}
+              : () {
+                  controller.sendRating();
+                },
         ),
-        onPressed: () {
-          controller.sendRating();
-        },
       ),
     );
   }

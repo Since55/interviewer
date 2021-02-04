@@ -8,6 +8,6 @@ showSnackbar(title, message, {Icon icon}) {
         icon: icon,
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.white38,
-        duration: Duration(milliseconds: 1000),
+        duration: Duration(milliseconds: 3000),
       );
 }

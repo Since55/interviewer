@@ -1,6 +1,4 @@
 import 'package:get/get.dart';
-import 'package:meta/meta.dart';
-
 class AuthController extends GetxController {
 
 AuthController();

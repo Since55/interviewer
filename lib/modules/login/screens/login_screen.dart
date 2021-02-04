@@ -24,46 +24,58 @@ class LoginScreen extends GetWidget<LoginController> {
                 'LOGIN',
                 style: Theme.of(context).textTheme.headline4,
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(
-                  controller: this._emailController,
-                  focusNode: _emailFocus,
-                  keyboardType: TextInputType.emailAddress,
+              RaisedButton(
+                child: Text(
+                  'Sign in with Google',
                   style: TextStyle(
-                    fontSize: 13,
-                  ),
-                  onEditingComplete: () {
-                    fieldFocusChange(_emailFocus, _passwordFocus);
-                  },
-                  decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    labelText: "Username",
+                    color: Colors.white,
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(
-                  controller: this._passwordController,
-                  focusNode: _passwordFocus,
-                  keyboardType: TextInputType.text,
-                  style: TextStyle(
-                    fontSize: 13,
-                  ),
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    labelText: "Password",
-                  ),
-                ),
-              ),
-              FlatButton(
+                color: Colors.blue,
                 onPressed: () {
-                  _authController.login(_emailController.text.trim(), _passwordController.text.trim(),);
+                  _authController.signInWithGoogle();
                 },
-                child: Text('Login'),
               ),
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: TextField(
+              //     controller: this._emailController,
+              //     focusNode: _emailFocus,
+              //     keyboardType: TextInputType.emailAddress,
+              //     style: TextStyle(
+              //       fontSize: 13,
+              //     ),
+              //     onEditingComplete: () {
+              //       fieldFocusChange(_emailFocus, _passwordFocus);
+              //     },
+              //     decoration: InputDecoration(
+              //       border: const OutlineInputBorder(),
+              //       labelText: "Username",
+              //     ),
+              //   ),
+              // ),
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: TextField(
+              //     controller: this._passwordController,
+              //     focusNode: _passwordFocus,
+              //     keyboardType: TextInputType.text,
+              //     style: TextStyle(
+              //       fontSize: 13,
+              //     ),
+              //     obscureText: true,
+              //     decoration: InputDecoration(
+              //       border: const OutlineInputBorder(),
+              //       labelText: "Password",
+              //     ),
+              //   ),
+              // ),
+              // FlatButton(
+              //   onPressed: () {
+              //     _authController.login(_emailController.text.trim(), _passwordController.text.trim(),);
+              //   },
+              //   child: Text('Login'),
+              // ),
             ],
           ),
         ),
