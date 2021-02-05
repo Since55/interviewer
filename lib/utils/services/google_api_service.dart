@@ -7,14 +7,12 @@ import 'package:googleapis_auth/auth_io.dart';
 import 'package:interviewer/constants/google.dart';
 import 'package:interviewer/modules/home/models/calendar_event_model.dart';
 import 'package:interviewer/utils/helpers/text_helpers.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
 
 class GoogleApiService {
-  static const scope = const [
-    CalendarApi.CalendarReadonlyScope,
-    // DocsApi.DocumentsScope,
-    SheetsApi.SpreadsheetsScope,
-  ];
+  static const scope = GoogleApiConstants.API_SCOPES;
   AutoRefreshingAuthClient _client;
   String _selectedCalendarId;
 
@@ -26,14 +24,42 @@ class GoogleApiService {
 
   //TODO: Realize check credentials if user already gave permission
 
+
+  _initClient() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    DateTime _exp = DateTime.parse(_prefs.getString('api_atk_exp'));
+    AccessToken _atk = AccessToken('Bearer', _prefs.getString('api_atk'), _exp);
+    AccessCredentials _newCredentials = AccessCredentials(
+        _atk,
+        _prefs.getString('api_rtk'),
+        scope);
+    var _newClient = new http.Client();
+    AccessCredentials _accessCredentials = await refreshCredentials(
+        this._credentials, _newCredentials, _newClient);
+    this._client = autoRefreshingClient(this._credentials, _accessCredentials, _newClient);
+  }
+
   getClient() async {
     this._client = await clientViaUserConsent(_credentials, scope, prompt);
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    _prefs.setString('api_atk', _client.credentials.accessToken.data);
+    _prefs.setString('api_atk_exp', _client.credentials.accessToken.expiry.toString());
+    _prefs.setString('api_rtk', _client.credentials.refreshToken);
+  }
+
+  setClient() async {
+    try {
+      await _initClient();
+    } catch(e) {
+      await getClient();
+    }
+    if (_client == null) await getClient();
   }
 
   getEvents() async {
     try {
       if (_client == null) {
-        await getClient();
+        await setClient();
       }
       var calendar = CalendarApi(_client);
       String calendarId = "primary";
@@ -41,8 +67,6 @@ class GoogleApiService {
           await calendar.calendarList.get(calendarId);
       this._selectedCalendarId = selectedCalendar.id;
       final events = await calendar.events.list(calendarId);
-      // events.items.forEach((Event event) => print(
-      // 'Created: ${event.created}, creator: ${event.creator.email}, status: ${event.status}, DESC: ${event.description}, name: ${event.summary}, org: ${event.organizer}, time: ${event.originalStartTime.dateTime} "" ${event.originalStartTime.date}'));
       return events.items
           .map((event) => CalendarEventModel.fromApi(event))
           .toList();
@@ -100,14 +124,8 @@ class GoogleApiService {
     // getting Interviewer sheet
     Spreadsheet _sheet =
         await _sheetsApi.spreadsheets.get(GoogleApiConstants.SHEET_ID);
-
     await _sheetsApi.spreadsheets.batchUpdate(
-        _createBatchRequest([
-          candidateName,
-          role,
-          comment,
-          mapToTable(rating)
-        ]),
+        _createBatchRequest([candidateName, role, comment, mapToTable(rating)]),
         _sheet.spreadsheetId);
   }
 

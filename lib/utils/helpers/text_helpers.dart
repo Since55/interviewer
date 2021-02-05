@@ -1,9 +1,12 @@
+import 'package:intl/intl.dart';
+
 isNotNullOrEmpty(String text) {
   return text?.isNotEmpty ?? false;
 }
 
 dateTimeToHoursMinutes(DateTime date) {
-  return '${date.hour}:${date.minute}';
+  DateFormat format = DateFormat.Hm();
+  return '${format.format(date)}';
 }
 
 mapToTable(Map<String, double> map) {

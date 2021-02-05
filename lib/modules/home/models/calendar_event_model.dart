@@ -1,4 +1,5 @@
 import 'package:googleapis/calendar/v3.dart';
+import 'package:interviewer/constants/roles.dart';
 
 class CalendarEventModel {
   String id;
@@ -14,7 +15,7 @@ class CalendarEventModel {
     try {
       this.id = event.id;
       this.name = event.summary;
-      this.description = event.description;
+      this.description = mapRolesToString(mapRolesFromString(event.description));
       this.creatorEmail = event.creator.email;
       this.participants = event.attendees;
       this.startDate = event.start.dateTime.add(

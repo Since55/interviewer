@@ -34,7 +34,7 @@ class CandidateScreen extends GetView<CandidateController> {
                 children: [
                   // TODO: hide keyboard
                   TextField(
-                    maxLines: 2,
+                    maxLines: 3,
                     controller: controller.commentController,
                     focusNode: commentFocus,
                     decoration: InputDecoration(

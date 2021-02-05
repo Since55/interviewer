@@ -1,4 +1,5 @@
 enum Roles {
+  COMPETENCIES,
   FRONTEND,
   BACKEND,
   MOBILE,
@@ -8,7 +9,7 @@ enum Roles {
 Roles mapRolesFromString(String role) {
   Roles selectedRole = Roles.OTHER;
   roles.forEach((key, value) {
-    if (value.contains(role)) selectedRole = key;
+    if (value.contains(role?.toLowerCase())) selectedRole = key;
   });
   return selectedRole;
 }
@@ -21,6 +22,8 @@ String mapRolesToString(Roles role) {
       return 'backend';
     case Roles.MOBILE:
       return 'mobile';
+    case Roles.COMPETENCIES:
+      return 'competencies';
     default:
       return 'other';
   }
@@ -48,5 +51,10 @@ final Map<Roles, Set<String>> roles = {
     'mobile',
     'Mobile',
     'MOBILE',
+  },
+  Roles.COMPETENCIES: {
+    'comp',
+    'competencies',
+    'compet',
   }
 };

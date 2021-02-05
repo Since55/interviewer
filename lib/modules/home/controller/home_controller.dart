@@ -11,6 +11,16 @@ class HomeController extends GetxController {
   set eventList(value) => this._eventList.value = value;
   get eventList => this._eventList.value;
   
+  int compareDate(DateTime a, DateTime b) {
+    if (a.isAfter(b)) return 1;
+    if (b.isAfter(a)) return -1;
+    return 0;
+  }
+
+  sortEvents() {
+    this._eventList.sort((a, b) => compareDate(a.startDate, b.startDate));
+  }
+
   @override
   void onInit() async {
     getEventList();
@@ -18,12 +28,18 @@ class HomeController extends GetxController {
   }
 
   getEventList() async {
-    final List<CalendarEventModel> allEventsList = await this.repository.getEvents();
+    final List<CalendarEventModel> allEventsList =
+        await this.repository.getEvents();
     final DateTime today = DateTime.now();
-    List<CalendarEventModel> todayEvents = [];
-    allEventsList.forEach( (event) => event.startDate?.day == today.day &&
-          event.startDate?.year == today.year ?
-          todayEvents.add(event) : null,);
-    this.eventList = todayEvents;
+    final DateTime lastDate = today.add(Duration(days: 7));
+    List<CalendarEventModel> weekEvents = [];
+    allEventsList.forEach(
+      (event) =>
+          event.startDate.isAfter(today) && event.startDate.isBefore(lastDate)
+              ? weekEvents.add(event)
+              : null,
+    );
+    this.eventList = weekEvents;
+    sortEvents();
   }
 }

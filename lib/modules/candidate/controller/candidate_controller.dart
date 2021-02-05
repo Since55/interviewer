@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:interviewer/modules/home/controller/home_controller.dart';
+import 'package:interviewer/modules/home/models/calendar_event_model.dart';
 import 'package:interviewer/utils/services/firebase_service.dart';
 import 'package:interviewer/widgets/snackbar.dart';
 
@@ -33,17 +34,17 @@ class CandidateController extends GetxController {
 
   Future<void> sendRating() async {
     isBusy = true;
+    final temp = {...rating};
     try {
-      print('sending data to firestore...');
       await _firestore.sendInterviewRating(
         candidateName: candidateName,
         role: role,
-        rating: rating,
+        rating: temp,
         comment: commentController.text,
       );
       print('creating document...');
       await this.home.repository.writeResultToSheets(
-          candidateName, role, rating, commentController.text);
+          candidateName, role, temp, commentController.text);
       print('successfuly rated!');
       Get.back();
       showSnackbar(

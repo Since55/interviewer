@@ -26,9 +26,10 @@ class EventCard extends StatelessWidget {
                 style: Theme.of(context).textTheme.headline6,
               ),
               Text(
-                "position: ${this.event.description ?? 'unknown'}",
+                "position: ${this.event.description.capitalizeFirst ?? 'unknown'}",
               ),
-              Text('Start at: ${dateTimeToHoursMinutes(this.event.startDate)}'),
+              Text('Date: ${dateTimeToddMMyy(event.startDate)}'),
+              Text('Time: ${dateTimeToHoursMinutes(event.startDate)}'),
             ],
           ),
         ),

@@ -3,19 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:interviewer/core/auth/controllers/auth_controller.dart';
+import 'package:interviewer/modules/home/screens/home.dart';
 import 'package:interviewer/utils/helpers/text_helpers.dart';
 import 'package:interviewer/widgets/snackbar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginController extends GetxController {
   FirebaseAuth _auth = FirebaseAuth.instance;
   AuthController _authController = Get.find();
   GoogleSignInAccount _user;
   GoogleSignIn _googleSignIn = GoogleSignIn(
-    // scopes: [
-    //   'email',
-    //   gApi.CalendarApi.CalendarReadonlyScope,
-    //   DocsApi.DocumentsScope,
-    // ],
+    // scopes: GoogleApiConstants.API_SCOPES,
   );
   Rx<User> _firebaseUser = Rx<User>();
   User get user => _firebaseUser.value;
@@ -27,8 +25,6 @@ class LoginController extends GetxController {
   }
 
   void _isLoggedIn() async {
-    // print(_googleSignIn.isSignedIn().then((value) => value));
-    // print('fb: ${_auth.currentUser}');
     bool _isSignedIn = await _googleSignIn.isSignedIn();
     if (_isSignedIn) {
       this._user = _googleSignIn.currentUser;
@@ -77,10 +73,16 @@ class LoginController extends GetxController {
     }
   }
 
+  Future _clearPrefs() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    _prefs.clear(); 
+  }
+
   void signOut() async {
     try {
       await _auth.signOut();
       await _googleSignIn.signOut();
+      await _clearPrefs();
       this._authController.isSignedIn = false.obs();
     } catch (e) {
       Get.snackbar(
