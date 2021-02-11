@@ -7,6 +7,7 @@ import 'package:googleapis_auth/auth_io.dart';
 import 'package:interviewer/constants/google.dart';
 import 'package:interviewer/modules/home/models/calendar_event_model.dart';
 import 'package:interviewer/utils/helpers/text_helpers.dart';
+import 'package:interviewer/widgets/snackbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
@@ -22,56 +23,82 @@ class GoogleApiService {
           : GoogleApiConstants.CLIENT_ID_IOS,
       "");
 
-  //TODO: Realize check credentials if user already gave permission
-
+  clearClient() {
+    try {
+      _client.close();
+      this._client = null;
+    } catch (e) {
+      print(e);
+    }
+  }
 
   _initClient() async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     DateTime _exp = DateTime.parse(_prefs.getString('api_atk_exp'));
     AccessToken _atk = AccessToken('Bearer', _prefs.getString('api_atk'), _exp);
-    AccessCredentials _newCredentials = AccessCredentials(
-        _atk,
-        _prefs.getString('api_rtk'),
-        scope);
+    AccessCredentials _newCredentials =
+        AccessCredentials(_atk, _prefs.getString('api_rtk'), scope);
     var _newClient = new http.Client();
     AccessCredentials _accessCredentials = await refreshCredentials(
         this._credentials, _newCredentials, _newClient);
-    this._client = autoRefreshingClient(this._credentials, _accessCredentials, _newClient);
+    this._client =
+        autoRefreshingClient(this._credentials, _accessCredentials, _newClient);
   }
 
-  getClient() async {
+  _getClient() async {
     this._client = await clientViaUserConsent(_credentials, scope, prompt);
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     _prefs.setString('api_atk', _client.credentials.accessToken.data);
-    _prefs.setString('api_atk_exp', _client.credentials.accessToken.expiry.toString());
+    _prefs.setString(
+        'api_atk_exp', _client.credentials.accessToken.expiry.toString());
     _prefs.setString('api_rtk', _client.credentials.refreshToken);
   }
 
   setClient() async {
     try {
       await _initClient();
-    } catch(e) {
-      await getClient();
+    } catch (e) {
+      await _getClient();
     }
-    if (_client == null) await getClient();
+    if (_client == null) await _getClient();
   }
 
-  getEvents() async {
+  Future<List<CalendarListEntry>> getCalendarList() async {
     try {
       if (_client == null) {
         await setClient();
       }
       var calendar = CalendarApi(_client);
-      String calendarId = "primary";
-      CalendarListEntry selectedCalendar =
-          await calendar.calendarList.get(calendarId);
-      this._selectedCalendarId = selectedCalendar.id;
-      final events = await calendar.events.list(calendarId);
+      final calendarList = await calendar.calendarList.list();
+      return calendarList.items;
+    } catch (e) {
+      log('An error has ocured while fetching calendars: $e');
+      showSnackbar('An error has ocured while fetching calendars', e);
+    }
+    // final a = await calendar.calendarList.list();
+  }
+
+  getEvents({String calendarId}) async {
+    try {
+      if (_client == null) {
+        await setClient();
+      }
+      var calendar = CalendarApi(_client);
+      // CalendarListEntry selectedCalendar =
+      //     await calendar.calendarList.get('primary');
+      // this._selectedCalendarId = selectedCalendar.id;
+      if (calendarId?.isEmpty ?? true) calendarId = 'primary';
+      final events = await calendar.events.list(
+        calendarId,
+        timeMin: DateTime.now().toUtc(),
+        timeMax: DateTime.now().add(Duration(days: 7)).toUtc(),
+      ); // can be 'primary' or _selectedCalendarId;
       return events.items
           .map((event) => CalendarEventModel.fromApi(event))
           .toList();
     } catch (e) {
-      log('Error creating event $e');
+      log('Error fetching event $e');
+      showSnackbar('An error has ocured while fetching events', e);
       return [];
     }
   }
@@ -119,7 +146,7 @@ class GoogleApiService {
   Future writeResultToSheets(
       String candidateName, String role, Map rating, String comment) async {
     // check if we have permission to add data to table
-    if (_client == null) await getClient();
+    if (_client == null) await setClient();
     SheetsApi _sheetsApi = SheetsApi(_client);
     // getting Interviewer sheet
     Spreadsheet _sheet =

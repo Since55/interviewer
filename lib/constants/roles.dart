@@ -1,5 +1,6 @@
 enum Roles {
   COMPETENCIES,
+  RECRUITER,
   FRONTEND,
   BACKEND,
   MOBILE,
@@ -24,6 +25,8 @@ String mapRolesToString(Roles role) {
       return 'mobile';
     case Roles.COMPETENCIES:
       return 'competencies';
+    case Roles.RECRUITER:
+      return 'recruiter';
     default:
       return 'other';
   }
@@ -56,5 +59,11 @@ final Map<Roles, Set<String>> roles = {
     'comp',
     'competencies',
     'compet',
+  },
+  Roles.RECRUITER: {
+    'hr',
+    'human resources',
+    'human-resources',
+    'recruiter',
   }
 };

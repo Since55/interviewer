@@ -24,6 +24,9 @@ class LoginController extends GetxController {
     _isLoggedIn();
   }
 
+  String get userEmail => _user?.email ?? user?.email ?? '';
+  String get userPhoto => _user?.photoUrl ?? '';
+
   void _isLoggedIn() async {
     bool _isSignedIn = await _googleSignIn.isSignedIn();
     if (_isSignedIn) {

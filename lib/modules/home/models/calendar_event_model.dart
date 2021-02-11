@@ -16,11 +16,11 @@ class CalendarEventModel {
       this.id = event.id;
       this.name = event.summary;
       this.description = mapRolesToString(mapRolesFromString(event.description));
-      this.creatorEmail = event.creator.email;
+      // this.creatorEmail = event.creator.email;
       this.participants = event.attendees;
-      this.startDate = event.start.dateTime.add(
+      this.startDate = event.start?.dateTime?.add(
         Duration(hours: 2),
-      );
+      ) ?? DateTime(0);
     } catch (e) {
       print(e);
     }
